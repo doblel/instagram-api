@@ -5,7 +5,7 @@ from instagram import Instagram
 CONFIG = {
     'client_id': '<client_id>',
     'client_secret': '<client_secret>',
-    'redirect_uri': '<redirect_uri>'
+    'redirect_uri': '<http://localhost:5000/oauth_callback>'
 }
 
 app = Flask(__name__)
@@ -21,6 +21,7 @@ def index():
     if user is not None:
         api = Instagram()
         data = api.self(access_token=user['access_token'])
+
         return jsonify(data)
 
     return 'No user'
@@ -32,7 +33,7 @@ def login():
     return redirect(url)
 
 
-@app.route('/user/oauh')
+@app.route('/oaut_callback')
 def oaut_callback():
     code = request.args.get('code', None)
 
