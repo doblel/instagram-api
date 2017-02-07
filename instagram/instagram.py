@@ -324,6 +324,44 @@ class Instagram(object):
 
         return self._make_request(url=url, params=payload)
 
+    # https://www.instagram.com/developer/endpoints/locations/#get_locations
+    def get_location(self, location_id, access_token=None):
+        """Get information about a location."""
+        url = self.api_path + '/locations/{id}?'.format(id=location_id)
+        token = access_token if access_token else self.access_token
+        payload = {
+            'access_token': token
+        }
+
+        return self._make_request(url=url, params=payload)
+
+    # https://www.instagram.com/developer/endpoints/locations/#get_locations_media_recent
+    def media_by_location(self, location_id, access_token=None):
+        """Get a list of recent media objects from a given location."""
+        url = self.api_path + '/locations/{id}/media/recent?'.format(
+            id=location_id
+        )
+        token = access_token if access_token else self.access_token
+        payload = {
+            'access_token': token
+        }
+
+        return self._make_request(url=url, params=payload)
+
+    # https://www.instagram.com/developer/endpoints/locations/#get_locations_search
+    def search_location(self, location, access_token=None):
+        """Search for a location by geographic coordinate."""
+        url = self.api_path + '/locations/search?'
+        token = access_token if access_token else self.access_token
+        lat, lng = location
+        payload = {
+            'lat': lat,
+            'lng': lng,
+            'access_token': token
+        }
+
+        return self._make_request(url=url, params=payload)
+
     # internal method
     def _make_request(self, method='GET', url=None, params=None, data=None):
         """Make request and return json representated response."""
