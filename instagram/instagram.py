@@ -1,8 +1,8 @@
 """core."""
-from .auth import InstagramAuth
+from .base import InstagramBase
 
 
-class Instagram(InstagramAuth):
+class Instagram(InstagramBase):
     """Class that involves the methods of the instragram api."""
 
     host = 'https://api.instagram.com'
