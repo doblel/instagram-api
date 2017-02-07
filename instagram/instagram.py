@@ -290,6 +290,40 @@ class Instagram(object):
 
         return self._make_request(method='DEL', url=url, params=payload)
 
+    # https://www.instagram.com/developer/endpoints/tags/#get_tags
+    def get_tag(self, tag, access_token=None):
+        """Get information about a tag object."""
+        url = self.api_path + '/tags/{tag}?'.format(tag=tag)
+        token = access_token if access_token else self.access_token
+        payload = {
+            'access_token': token
+        }
+
+        return self._make_request(url=url, params=payload)
+
+    # https://www.instagram.com/developer/endpoints/tags/#get_tags_media_recent
+    def media_by_tag(self, tag, access_token=None):
+        """Get a list of recently tagged media."""
+        url = self.api_path + '/tags/{tag}/media/recent?'.format(tag=tag)
+        token = access_token if access_token else self.access_token
+        payload = {
+            'access_token': token
+        }
+
+        return self._make_request(url=url, params=payload)
+
+    # https://www.instagram.com/developer/endpoints/tags/#get_tags_search
+    def search_tag(self, tag, access_token=None):
+        """Search for tags by name."""
+        url = self.api_path + '/tags/search?'
+        token = access_token if access_token else self.access_token
+        payload = {
+            'q': tag,
+            'access_token': token
+        }
+
+        return self._make_request(url=url, params=payload)
+
     # internal method
     def _make_request(self, method='GET', url=None, params=None, data=None):
         """Make request and return json representated response."""
