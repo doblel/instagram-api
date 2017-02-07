@@ -1,52 +1,17 @@
 """core."""
-import requests
+from .auth import InstagramAuth
 
 
-class Instagram(object):
+class Instagram(InstagramAuth):
     """Class that involves the methods of the instragram api."""
 
     host = 'https://api.instagram.com'
     base_path = '/v1'
-    auth_path = '/oauth'
     api_path = host + base_path
 
-    def __init__(
-        self,
-        client_id=None,
-        client_secret=None,
-        redirect_uri=None,
-        access_token=None
-    ):
+    def __init__(self, *args, **kwargs):
         """Initial args."""
-        self.client_id = client_id
-        self.client_secret = client_secret
-        self.redirect_uri = redirect_uri
-        self.access_token = access_token
-
-    # https://www.instagram.com/developer/authentication/
-    def auth_url(self, scope='basic+public_content+follower_list+comments+likes'):
-        """Return instagram authorization url."""
-        url = self.host + self.auth_path + '/authorize/?'
-        p = 'client_id={}&redirect_uri={}&response_type=code&scope={}'.format(
-            self.client_id,
-            self.redirect_uri,
-            scope
-        )
-        return url + p
-
-    # https://www.instagram.com/developer/authentication/
-    def exchange_code_for_token(self, code):
-        """Get token from code."""
-        url = self.host + self.auth_path + '/access_token'
-        payload = {
-            "client_id": self.client_id,
-            "client_secret": self.client_secret,
-            "redirect_uri": self.redirect_uri,
-            "grant_type": "authorization_code",
-            'code': code
-        }
-
-        return self._make_request(method='POST', url=url, data=payload)
+        super(Instagram, self).__init__(**kwargs)
 
     # https://www.instagram.com/developer/endpoints/users/#get_users_self
     def self(self, access_token=None):
@@ -169,7 +134,7 @@ class Instagram(object):
 
     # https://www.instagram.com/developer/endpoints/relationships/#get_incoming_requests
     def self_pending(self, access_token=None):
-        """List the users who have requested this user's permission to follow."""
+        """List users who have requested this user's permission to follow."""
         url = self.api_path + '/users/self/requested-by?'
         token = access_token if access_token else self.access_token
         payload = {
@@ -361,18 +326,3 @@ class Instagram(object):
         }
 
         return self._make_request(url=url, params=payload)
-
-    # internal method
-    def _make_request(self, method='GET', url=None, params=None, data=None):
-        """Make request and return json representated response."""
-        if method == 'GET':
-            r = requests.get(url, params=params)
-        elif method == 'POST':
-            r = requests.post(url, data=data)
-        else:
-            r = requests.delete(url, params=params)
-
-        print r.status_code, r.url
-        if r.ok:
-            data = r.json()
-            return data
