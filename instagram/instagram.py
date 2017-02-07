@@ -53,7 +53,7 @@ class Instagram(object):
         """Get information about the owner of the token."""
         url = self.api_path + '/users/self/?'
         payload = {
-            'access_token': access_token
+            'access_token': self.access_token
         }
 
         return self._make_request(url=url, params=payload)
@@ -122,7 +122,8 @@ class Instagram(object):
 
     # https://www.instagram.com/developer/endpoints/relationships/#post_relationship
     def update_relationship(self, user_id=None, action=None, access_token=None):
-        """
+        """Relationship endpoint.
+
         Modify the relationship between the current user and the target user.
         You need to include an action parameter to specify the relationship
         action you want to perform.
@@ -166,6 +167,35 @@ class Instagram(object):
 
         return self._make_request(url=url, params=payload)
 
+    # https://www.instagram.com/developer/endpoints/media/#get_media
+    def get_media(self, media_id=None, access_token=None):
+        """Media endpoint.
+
+        Get information about a media object. Use the type field to.
+        differentiate between image and video media in the response.
+        You will also receive the user_has_liked field which tells you whether
+        the owner of the access_token has liked this media.
+        """
+        url = self.api_path + '/media/{id}?'.format(id=media_id)
+        payload = {
+            'access_token': access_token
+        }
+
+        return self._make_request(url=url, params=payload)
+
+    # https://www.instagram.com/developer/endpoints/media/#get_media_search
+    def search_media(self, location=None, access_token=None):
+        """Search for recent media in a given area."""
+        lat, lng = location
+        url = self.api_path + '/media/search?'
+        payload = {
+            'lat': lat,
+            'lng': lng,
+            'access_token': self.access_token
+        }
+
+        return self._make_request(url=url, params=payload)
+
     # internal method
     def _make_request(self, method='GET', url=None, params=None, data=None):
         """Make request and return json representated response."""
@@ -174,6 +204,7 @@ class Instagram(object):
         else:
             r = requests.post(url, data=data)
 
+        print r.url
         if r.ok:
             data = r.json()
             return data
